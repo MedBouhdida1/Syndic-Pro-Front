@@ -7,6 +7,7 @@ import SideBar from './Components/SideBarComponent/SideBar';
 import Resident from './Components/ResidentComponent/Resident';
 import Login from './Components/LoginComponent/Login';
 import { useState } from 'react';
+import Syndic from './Components/SyndicComponent/Syndic';
 
 
 
@@ -22,7 +23,8 @@ function App() {
            {loggedin?<NavBar />:<></>} 
             <Routes>
               <Route exact path="/" element={<Home />} />
-              <Route path="/Resident" element={<Resident />} />
+              <Route path="/resident" element={<Resident />} />
+              <Route path="/syndic" element={<Syndic />} />
               <Route path="/login" element={<Login />} />
             </Routes>
           </div>

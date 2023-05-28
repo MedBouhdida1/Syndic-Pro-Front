@@ -44,9 +44,17 @@ const SideBar = () => {
           <li className={`sidebar-item${pathUrl==="/resident"?" active":""}`}  onClick={()=>setPathUrl("/resident")}>
             <Link className="sidebar-link" to="/resident" aria-expanded="false">
               <span>
-                <i className="ti ti-user" />
+                <i className="ti ti-users" />
               </span>
               <span className="hide-menu">Residents</span>
+            </Link>
+          </li>
+          <li className={`sidebar-item${pathUrl==="/syndic"?" active":""}`}  onClick={()=>setPathUrl("/syndic")}>
+            <Link className="sidebar-link" to="/syndic" aria-expanded="false">
+              <span>
+                <i className="ti ti-id-badge" />
+              </span>
+              <span className="hide-menu">Syndics</span>
             </Link>
           </li>
           <li className="sidebar-item">
