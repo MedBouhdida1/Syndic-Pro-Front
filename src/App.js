@@ -12,15 +12,15 @@ import Syndic from './Components/SyndicComponent/Syndic';
 
 
 function App() {
-  const [loggedin,setLoggedin] = useState(true)
+  const [loggedin, setLoggedin] = useState(true)
   return (
 
     <Router>
       <div>
-        <div className="page-wrapper" id="main-wrapper" data-layout={loggedin?"vertical":"none"} data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
-          {loggedin?<SideBar />:<></>}  
+        <div className="page-wrapper" id="main-wrapper" data-layout={loggedin ? "vertical" : "none"} data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+          {loggedin ? <SideBar /> : <></>}
           <div className="body-wrapper">
-           {loggedin?<NavBar />:<></>} 
+            {loggedin ? <NavBar /> : <></>}
             <Routes>
               <Route exact path="/" element={<Home />} />
               <Route path="/resident" element={<Resident />} />

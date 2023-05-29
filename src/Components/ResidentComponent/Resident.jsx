@@ -1,53 +1,153 @@
+import { Input, Flex, Button } from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react'
+import { useState, useEffect, useRef } from 'react';
+import { HandlePostRequest } from '../../Helpers/HandlePostRequest';
+import resident from '../../Types/resident';
+import useFetch from '../../Hooks/useFetch';
+import axios from 'axios';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel, useDisclosure,
+
+} from '@chakra-ui/react'
+
+
 const Resident = () => {
-    return ( 
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const toast = useToast()
+  const initialRef = useRef(null)
+  const [res, setResident] = useState(new resident());
+  const { data } = useFetch("http://localhost:8080/resident")
+  const [LstResident, setLstResident] = useState([]);
+
+  const handleDelete = (id) => {
+    axios.delete("http://localhost:8080/resident/" + id)
+      .then(() => {
+        toast({
+          title: 'Book Deleted.',
+          description: "Book has been deleted successfully!",
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+        const newList = LstResident.filter(res => res.id !== id)
+
+        setLstResident(newList)
+      })
+
+      .catch(error => {
+        toast({
+          title: 'Server Error.',
+          description: "Error:" + error,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+      })
+  }
+  useEffect(() => {
+    if (data) {
+      setLstResident(data);
+      console.log(LstResident)
+    }
+
+  }, [data]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const newResident = await HandlePostRequest("http://localhost:8080/resident/register", res);
+      setLstResident([...LstResident, newResident.data]);
+
+      onClose();
+      //......................
+      console.log(LstResident)
+
+
+      toast({
+        title: 'Book Added.',
+        description: `Resident ${res.firstName} ${res.lastName} has been added successfully!`,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+      setResident(null)
+
+    } catch (err) {
+      toast({
+        title: 'Server Error.',
+        description: "Error:" + err,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+
+  }
+
+  return (
+    <>
       <div className="container-fluid">
-  <div className="card bg-light-info shadow-none position-relative overflow-hidden">
-    <div className="card-body px-4 py-3">
-      <div className="row align-items-center">
-        <div className="col-9">
-          <h4 className="fw-semibold mb-8">Residents</h4>
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item"><a className="text-muted" href="index.html">Dashboard</a></li>
-              <li className="breadcrumb-item" aria-current="page">Residents</li>
-            </ol>
-          </nav>
-        </div>
-        <div className="col-3">
-          <div className="text-center mb-n5">  
-            <img src="images/breadcrumb/ChatBc.png" alt className="img-fluid mb-n4" />
+        <div className="card bg-light-info shadow-none position-relative overflow-hidden">
+          <div className="card-body px-4 py-3">
+            <div className="row align-items-center">
+              <div className="col-9">
+                <h4 className="fw-semibold mb-8">Residents</h4>
+                <nav aria-label="breadcrumb">
+                  <ol className="breadcrumb">
+                    <li className="breadcrumb-item"><a className="text-muted" href="index.html">Dashboard</a></li>
+                    <li className="breadcrumb-item" aria-current="page">Residents</li>
+                  </ol>
+                </nav>
+              </div>
+              <div className="col-3">
+                <div className="text-center mb-n5">
+                  <img src="images/breadcrumb/ChatBc.png" alt className="img-fluid mb-n4" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <div className="widget-content searchable-container list">
-    {/* --------------------- start Contact ---------------- */}
-    <div className="card card-body">
-      <div className="row">
-        <div className="col-md-4 col-xl-3">
-          <form className="position-relative">
-            <input type="text" className="form-control product-search ps-5" id="input-search" placeholder="Search Residents..." />
-            <i className="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3" />
-          </form>
-        </div>
-        <div className="col-md-8 col-xl-9 text-end d-flex justify-content-md-end justify-content-center mt-3 mt-md-0">
-          {/* <div className="action-btn show-btn" style={{display: 'none'}}>
+        <div className="widget-content searchable-container list">
+          {/* --------------------- start Contact ---------------- */}
+          <div className="card card-body">
+            <div className="row">
+              <div className="col-md-4 col-xl-3">
+                <form className="position-relative">
+                  <input type="text" className="form-control product-search ps-5" id="input-search" placeholder="Search Residents..." />
+                  <i className="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3" />
+                </form>
+              </div>
+              <div className="col-md-8 col-xl-9 text-end d-flex justify-content-md-end justify-content-center mt-3 mt-md-0">
+                {/* <div className="action-btn show-btn" style={{display: 'none'}}>
             <a href="javascript:void(0)" className="delete-multiple btn-light-danger btn me-2 text-danger d-flex align-items-center font-medium">
               <i className="ti ti-trash text-danger me-1 fs-5" /> Delete All Row 
             </a>
           </div> */}
-          <a href="javascript:void(0)" id="btn-add-contact" className="btn btn-info d-flex align-items-center">
-            <i className="ti ti-users text-white me-1 fs-5" /> Ajouter Resident 
-          </a>
-        </div>
-      </div>
-    </div>
-    {/* ---------------------
+                <Flex justify="space-between" m="30">
+
+                  <Button href="javascript:void(0)" id="btn-add-contact" onClick={onOpen} >
+                    <i className="ti ti-users text-black me-1 fs-5" /> Ajouter Resident
+                  </Button>
+
+                </Flex>
+
+              </div>
+            </div>
+          </div>
+          {/* ---------------------
                     end Contact
                 ---------------- */}
-    {/* //!Modal */}
-    {/* <div className="modal fade" id="addContactModal" tabIndex={-1} role="dialog" aria-labelledby="addContactModalTitle" aria-hidden="true">
+          {/* //!Modal */}
+          {/* <div className="modal fade" id="addContactModal" tabIndex={-1} role="dialog" aria-labelledby="addContactModalTitle" aria-hidden="true">
       <div className="modal-dialog modal-dialog-centered" role="document">
         <div className="modal-content">
           <div className="modal-header d-flex align-items-center">
@@ -104,367 +204,136 @@ const Resident = () => {
         </div>
       </div>
     </div> */}
-    <div className="card card-body">
-      <div className="table-responsive">
-        <table className="table search-table align-middle text-nowrap">
-          <thead className="header-item">
-            <tr><th>
-                <div className="n-chk align-self-center text-center">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input primary" id="contact-check-all" />
-                    <label className="form-check-label" htmlFor="contact-check-all" />
-                    <span className="new-control-indicator" />
-                  </div>
-                </div>
-              </th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Address</th>
-              <th>Phone</th>
-              <th>Action</th>
-            </tr></thead>
-          <tbody>
-            {/* start row */}
-            <tr className="search-items">
-              <td>
-                <div className="n-chk align-self-center text-center">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input contact-chkbox primary" id="checkbox1" />
-                    <label className="form-check-label" htmlFor="checkbox1" />
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div className="d-flex align-items-center">
-                  <img src="images/profile/user-1.jpg" alt="avatar" className="rounded-circle" width={35} />
-                  <div className="ms-3">
-                    <div className="user-meta-info">
-                      <h6 className="user-name mb-0" data-name="Emma Adams">Emma Adams</h6>
-                      <span className="user-work fs-3" data-occupation="Web Developer">Web Developer</span>
+          <div className="card card-body">
+            <div className="table-responsive">
+              <table className="table search-table align-middle text-nowrap">
+                <thead className="header-item">
+                  <tr><th>
+                    <div className="n-chk align-self-center text-center">
+                      <div className="form-check">
+                        <input type="checkbox" className="form-check-input primary" id="contact-check-all" />
+                        <label className="form-check-label" htmlFor="contact-check-all" />
+                        <span className="new-control-indicator" />
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <span className="usr-email-addr" data-email="adams@mail.com">adams@mail.com</span>
-              </td>
-              <td>
-                <span className="usr-location" data-location="Boston, USA">Boston, USA</span>
-              </td>
-              <td>
-                <span className="usr-ph-no" data-phone="+1 (070) 123-4567">+91 (070) 123-4567</span>
-              </td>
-              <td>
-                <div className="action-btn">
-                  <a href="javascript:void(0)" className="text-info edit">
-                    <i className="ti ti-eye fs-5" />
-                  </a>
-                  <a href="javascript:void(0)" className="text-dark delete ms-2">
-                    <i className="ti ti-trash fs-5" />
-                  </a>
-                </div>
-              </td>
-            </tr>
-            {/* end row */}
-            {/* start row */}
-            <tr className="search-items">
-              <td>
-                <div className="n-chk align-self-center text-center">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input contact-chkbox primary" id="checkbox2" />
-                    <label className="form-check-label" htmlFor="checkbox2" />
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div className="d-flex align-items-center">
-                  <img src="images/profile/user-2.jpg" alt="avatar" className="rounded-circle" width={35} />
-                  <div className="ms-3">
-                    <div className="user-meta-info">
-                      <h6 className="user-name mb-0" data-name="Olivia Allen">Olivia Allen</h6>
-                      <span className="user-work fs-3" data-occupation="Web Designer">Web Designer</span>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <span className="usr-email-addr" data-email="allen@mail.com">allen@mail.com</span>
-              </td>
-              <td>
-                <span className="usr-location" data-location="Sydney, Australia">Sydney, Australia</span>
-              </td>
-              <td>
-                <span className="usr-ph-no" data-phone="+91 (125) 450-1500">+91 (125) 450-1500</span>
-              </td>
-              <td>
-                <div className="action-btn">
-                  <a href="javascript:void(0)" className="text-info edit">
-                    <i className="ti ti-eye fs-5" />
-                  </a>
-                  <a href="javascript:void(0)" className="text-dark delete ms-2">
-                    <i className="ti ti-trash fs-5" />
-                  </a>
-                </div>
-              </td>
-            </tr>
-            {/* end row */}
-            {/* start row */}
-            <tr className="search-items">
-              <td>
-                <div className="n-chk align-self-center text-center">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input contact-chkbox primary" id="checkbox3" />
-                    <label className="form-check-label" htmlFor="checkbox3" />
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div className="d-flex align-items-center">
-                  <img src="images/profile/user-3.jpg" alt="avatar" className="rounded-circle" width={35} />
-                  <div className="ms-3">
-                    <div className="user-meta-info">
-                      <h6 className="user-name mb-0" data-name="Isabella Anderson"> Isabella Anderson </h6>
-                      <span className="user-work fs-3" data-occupation="UX/UI Designer">UX/UI Designer</span>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <span className="usr-email-addr" data-email="anderson@mail.com">anderson@mail.com</span>
-              </td>
-              <td>
-                <span className="usr-location" data-location="Miami, USA">Miami, USA</span>
-              </td>
-              <td>
-                <span className="usr-ph-no" data-phone="+91 (100) 154-1254">+91 (100) 154-1254</span>
-              </td>
-              <td>
-                <div className="action-btn">
-                  <a href="javascript:void(0)" className="text-info edit">
-                    <i className="ti ti-eye fs-5" />
-                  </a>
-                  <a href="javascript:void(0)" className="text-dark delete ms-2">
-                    <i className="ti ti-trash fs-5" />
-                  </a>
-                </div>
-              </td>
-            </tr>
-            {/* end row */}
-            {/* start row */}
-            <tr className="search-items">
-              <td>
-                <div className="n-chk align-self-center text-center">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input contact-chkbox primary" id="checkbox4" />
-                    <label className="form-check-label" htmlFor="checkbox4" />
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div className="d-flex align-items-center">
-                  <img src="images/profile/user-4.jpg" alt="avatar" className="rounded-circle" width={35} />
-                  <div className="ms-3">
-                    <div className="user-meta-info">
-                      <h6 className="user-name mb-0" data-name="Amelia Armstrong"> Amelia Armstrong </h6>
-                      <span className="user-work fs-3" data-occupation="Ethical Hacker">Ethical Hacker</span>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <span className="usr-email-addr" data-email="armstrong@mail.com">armstrong@mail.com</span>
-              </td>
-              <td>
-                <span className="usr-location" data-location="Tokyo, Japan">Tokyo, Japan</span>
-              </td>
-              <td>
-                <span className="usr-ph-no" data-phone="+91 (154) 199- 1540">+91 (154) 199- 1540</span>
-              </td>
-              <td>
-                <div className="action-btn">
-                  <a href="javascript:void(0)" className="text-info edit">
-                    <i className="ti ti-eye fs-5" />
-                  </a>
-                  <a href="javascript:void(0)" className="text-dark delete ms-2">
-                    <i className="ti ti-trash fs-5" />
-                  </a>
-                </div>
-              </td>
-            </tr>
-            {/* end row */}
-            {/* start row */}
-            <tr className="search-items">
-              <td>
-                <div className="n-chk align-self-center text-center">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input contact-chkbox primary" id="checkbox5" />
-                    <label className="form-check-label" htmlFor="checkbox5" />
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div className="d-flex align-items-center">
-                  <img src="images/profile/user-5.jpg" alt="avatar" className="rounded-circle" width={35} />
-                  <div className="ms-3">
-                    <div className="user-meta-info">
-                      <h6 className="user-name mb-0" data-name="Emily Atkinson"> Emily Atkinson </h6>
-                      <span className="user-work fs-3" data-occupation="Web developer">Web developer</span>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <span className="usr-email-addr" data-email="atkinson@mail.com">atkinson@mail.com</span>
-              </td>
-              <td>
-                <span className="usr-location" data-location="Edinburgh, UK">Edinburgh, UK</span>
-              </td>
-              <td>
-                <span className="usr-ph-no" data-phone="+91 (900) 150- 1500">+91 (900) 150- 1500</span>
-              </td>
-              <td>
-                <div className="action-btn">
-                  <a href="javascript:void(0)" className="text-info edit">
-                    <i className="ti ti-eye fs-5" />
-                  </a>
-                  <a href="javascript:void(0)" className="text-dark delete ms-2">
-                    <i className="ti ti-trash fs-5" />
-                  </a>
-                </div>
-              </td>
-            </tr>
-            {/* end row */}
-            {/* start row */}
-            <tr className="search-items">
-              <td>
-                <div className="n-chk align-self-center text-center">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input contact-chkbox primary" id="checkbox6" />
-                    <label className="form-check-label" htmlFor="checkbox6" />
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div className="d-flex align-items-center">
-                  <img src="images/profile/user-1.jpg" alt="avatar" className="rounded-circle" width={35} />
-                  <div className="ms-3">
-                    <div className="user-meta-info">
-                      <h6 className="user-name mb-0" data-name="Sofia Bailey">Sofia Bailey</h6>
-                      <span className="user-work fs-3" data-occupation="UX/UI Designer">UX/UI Designer</span>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <span className="usr-email-addr" data-email="bailey@mail.com">bailey@mail.com</span>
-              </td>
-              <td>
-                <span className="usr-location" data-location="New York, USA">New York, USA</span>
-              </td>
-              <td>
-                <span className="usr-ph-no" data-phone="+91 (001) 160- 1845">+91 (001) 160- 1845</span>
-              </td>
-              <td>
-                <div className="action-btn">
-                  <a href="javascript:void(0)" className="text-info edit">
-                    <i className="ti ti-eye fs-5" />
-                  </a>
-                  <a href="javascript:void(0)" className="text-dark delete ms-2">
-                    <i className="ti ti-trash fs-5" />
-                  </a>
-                </div>
-              </td>
-            </tr>
-            <tr className="search-items">
-              <td>
-                <div className="n-chk align-self-center text-center">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input contact-chkbox primary" id="checkbox7" />
-                    <label className="form-check-label" htmlFor="checkbox7" />
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div className="d-flex align-items-center">
-                  <img src="images/profile/user-2.jpg" alt="avatar" className="rounded-circle" width={35} />
-                  <div className="ms-3">
-                    <div className="user-meta-info">
-                      <h6 className="user-name mb-0" data-name="Victoria Sharma"> Victoria Sharma </h6>
-                      <span className="user-work fs-3" data-occupation="Project Manager">Project Manager</span>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <span className="usr-email-addr" data-email="sharma@mail.com">sharma@mail.com</span>
-              </td>
-              <td>
-                <span className="usr-location" data-location="Miami, USA">Miami, USA</span>
-              </td>
-              <td>
-                <span className="usr-ph-no" data-phone="+91 (110) 180- 1600">+91 (110) 180- 1600</span>
-              </td>
-              <td>
-                <div className="action-btn">
-                  <a href="javascript:void(0)" className="text-info edit">
-                    <i className="ti ti-eye fs-5" />
-                  </a>
-                  <a href="javascript:void(0)" className="text-dark delete ms-2">
-                    <i className="ti ti-trash fs-5" />
-                  </a>
-                </div>
-              </td>
-            </tr>
-            <tr className="search-items">
-              <td>
-                <div className="n-chk align-self-center text-center">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input contact-chkbox primary" id="checkbox8" />
-                    <label className="form-check-label" htmlFor="checkbox8" />
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div className="d-flex align-items-center">
-                  <img src="images/profile/user-3.jpg" alt="avatar" className="rounded-circle" width={35} />
-                  <div className="ms-3">
-                    <div className="user-meta-info">
-                      <h6 className="user-name mb-0" data-name="Penelope Baker"> Penelope Baker </h6>
-                      <span className="user-work fs-3" data-occupation="Web Developer">Web Developer</span>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <span className="usr-email-addr" data-email="baker@mail.com">baker@mail.com</span>
-              </td>
-              <td>
-                <span className="usr-location" data-location="Edinburgh, UK">Edinburgh, UK</span>
-              </td>
-              <td>
-                <span className="usr-ph-no" data-phone="+91 (405) 483- 4512">+91 (405) 483- 4512</span>
-              </td>
-              <td>
-                <div className="action-btn">
-                  <a href="javascript:void(0)" className="text-info edit">
-                    <i className="ti ti-eye fs-5" />
-                  </a>
-                  <a href="javascript:void(0)" className="text-dark delete ms-2">
-                    <i className="ti ti-trash fs-5" />
-                  </a>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                  </th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Action</th>
+                  </tr></thead>
+                <tbody>
+                  {/* start row */}
+                  {LstResident.map((res) => (
+                    <tr className="search-items">
+                      <td>
+                        <div className="n-chk align-self-center text-center">
+                          <div className="form-check">
+                            <input type="checkbox" className="form-check-input contact-chkbox primary" id="checkbox1" />
+                            <label className="form-check-label" htmlFor="checkbox1" />
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center">
+                          <img src="images/profile/user-1.jpg" alt="avatar" className="rounded-circle" width={35} />
+                          <div className="ms-3">
+                            <div className="user-meta-info">
+                              <h6 className="user-name mb-0" data-name="Emma Adams">{res.firstName} {res.lastName}</h6>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className="usr-email-addr" data-email="adams@mail.com">{res.email}</span>
+                      </td>
+                      <td>
+                        <span className="usr-location" data-location="Boston, USA">{res.address}</span>
+                      </td>
+                      <td>
+                        <span className="usr-ph-no" data-phone="+1 (070) 123-4567">{res.phone}</span>
+                      </td>
+                      <td>
+                        <div className="action-btn">
+                          <a href="javascript:void(0)" className="text-info edit">
+                            <i className="ti ti-eye fs-5" />
+                          </a>
+                          <button onClick={() => handleDelete(res.id)} className="text-dark delete ms-2">
+                            <i className="ti ti-trash fs-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
       </div>
-    </div>
-  </div>
-  
-</div>
+
+      <Modal
+        initialFocusRef={initialRef}
+
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <form onSubmit={handleSubmit}>
+            <ModalHeader>Add Resident</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+
+              <FormControl>
+                <FormLabel>First Name</FormLabel>
+                <Input placeholder='First name' onChange={(event) => setResident({ ...res, firstName: event.target.value })} />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Last Name</FormLabel>
+                <Input placeholder='Last name' onChange={(event) => setResident({ ...res, lastName: event.target.value })} />
+              </FormControl>
+              <FormControl>
+
+                <FormLabel>Email</FormLabel>
+                <Input placeholder='Email' onChange={(event) => setResident({ ...res, email: event.target.value })} />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Address</FormLabel>
+                <Input placeholder='Address' onChange={(event) => setResident({ ...res, address: event.target.value })} />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Phone</FormLabel>
+                <Input placeholder='Address' onChange={(event) => setResident({ ...res, phone: event.target.value })} />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Password</FormLabel>
+                <Input type='password' placeholder='Password' onChange={(event) => setResident({ ...res, password: event.target.value })} />
+              </FormControl>
 
 
-     );
+
+
+            </ModalBody>
+
+
+            <ModalFooter>
+              <Button type="submit" colorScheme='blue' mr={3}>
+                Save
+              </Button>
+              <Button onClick={onClose}>Cancel</Button>
+            </ModalFooter>
+          </form>
+        </ModalContent>
+      </Modal>
+    </>
+
+  );
 }
- 
+
 export default Resident;
