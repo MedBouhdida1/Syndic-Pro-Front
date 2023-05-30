@@ -49,6 +49,7 @@ const SideBar = () => {
                   <span className="hide-menu">Residents</span>
                 </Link>
               </li>
+
               <li className={`sidebar-item${pathUrl === "/syndic" ? " active" : ""}`} onClick={() => setPathUrl("/syndic")}>
                 <Link className="sidebar-link" to="/syndic" aria-expanded="false">
                   <span>
@@ -56,7 +57,16 @@ const SideBar = () => {
                   </span>
                   <span className="hide-menu">Syndics</span>
                 </Link>
+              </li> 
+              <li className={`sidebar-item${pathUrl === "/AG" ? " active" : ""}`} onClick={() => setPathUrl("/AG")}>
+                <Link className="sidebar-link" to="/AG" aria-expanded="false">
+                  <span>
+                    <i className="ti ti-id-badge" />
+                  </span>
+                  <span className="hide-menu">AG</span>
+                </Link>
               </li>
+
               <li className="sidebar-item">
                 <a className="sidebar-link" href="#" aria-expanded="false">
                   <span>

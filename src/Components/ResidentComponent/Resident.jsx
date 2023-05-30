@@ -2,7 +2,7 @@ import { Input, Flex, Button } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react'
 import { useState, useEffect, useRef } from 'react';
 import { HandlePostRequest } from '../../Helpers/HandlePostRequest';
-import resident from '../../Types/resident';
+import resident from '../../Types/Resident';
 import useFetch from '../../Hooks/useFetch';
 import axios from 'axios';
 import {
