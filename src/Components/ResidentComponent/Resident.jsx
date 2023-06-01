@@ -1,38 +1,54 @@
-import { Input, Flex, Button } from '@chakra-ui/react';
+import { Input, Flex, Button, Wrap } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react'
 import { useState, useEffect, useRef } from 'react';
-import { HandlePostRequest } from '../../Helpers/HandlePostRequest';
 import resident from '../../Types/resident';
 import useFetch from '../../Hooks/useFetch';
 import axios from 'axios';
+import ModalModifierResident from './ModalModifierResident';
+import { Avatar, AvatarBadge, AvatarGroup } from '@chakra-ui/react'
+
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel, useDisclosure,
+  useDisclosure,
 
 } from '@chakra-ui/react'
+import ModalAjouterResident from './ModalAjouterResident';
+
+
 
 
 const Resident = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen: isOpenModal1, onOpen: onOpenModal1, onClose: onCloseModal1 } = useDisclosure();
+  const { isOpen: isOpenModal2, onOpen: onOpenModal2, onClose: onCloseModal2 } = useDisclosure();
+
   const toast = useToast()
   const initialRef = useRef(null)
   const [res, setResident] = useState(new resident());
   const { data } = useFetch("http://localhost:8080/resident")
   const [LstResident, setLstResident] = useState([]);
+  const [search, setSearch] = useState("")
 
-  const handleDelete = (id) => {
-    axios.delete("http://localhost:8080/resident/" + id)
+
+  const openModalWithObject = (object) => {
+    setResident(object);
+    onOpenModal2();
+  };
+  const handleSearch = (event) => {
+    setSearch(event.target.value)
+  }
+
+  const SearchedList = LstResident.filter(function (res) {
+    return res.firstName.toLowerCase().includes(search.toLowerCase()) || res.lastName.toLowerCase().includes(search.toLowerCase())
+  })
+
+
+
+  const handleDelete = async (id) => {
+    console.log(id)
+    await axios.delete("http://localhost:8080/resident/" + id)
       .then(() => {
         toast({
-          title: 'Book Deleted.',
-          description: "Book has been deleted successfully!",
+          title: 'Resindent Deleted.',
+          description: "Resident has been deleted successfully!",
           status: 'success',
           duration: 3000,
           isClosable: true,
@@ -52,6 +68,8 @@ const Resident = () => {
         })
       })
   }
+
+
   useEffect(() => {
     if (data) {
       setLstResident(data);
@@ -60,38 +78,7 @@ const Resident = () => {
 
   }, [data]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    try {
-      const newResident = await HandlePostRequest("http://localhost:8080/resident/register", res);
-      setLstResident([...LstResident, newResident.data]);
-
-      onClose();
-      //......................
-      console.log(LstResident)
-
-
-      toast({
-        title: 'Book Added.',
-        description: `Resident ${res.firstName} ${res.lastName} has been added successfully!`,
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      })
-      setResident(null)
-
-    } catch (err) {
-      toast({
-        title: 'Server Error.',
-        description: "Error:" + err,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
-    }
-
-  }
 
   return (
     <>
@@ -122,9 +109,11 @@ const Resident = () => {
             <div className="row">
               <div className="col-md-4 col-xl-3">
                 <form className="position-relative">
-                  <input type="text" className="form-control product-search ps-5" id="input-search" placeholder="Search Residents..." />
+                  <input type="text" onChange={handleSearch} className="form-control product-search ps-5" id="input-search" placeholder="Search Residents..." />
                   <i className="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3" />
+
                 </form>
+
               </div>
               <div className="col-md-8 col-xl-9 text-end d-flex justify-content-md-end justify-content-center mt-3 mt-md-0">
                 {/* <div className="action-btn show-btn" style={{display: 'none'}}>
@@ -134,7 +123,7 @@ const Resident = () => {
           </div> */}
                 <Flex justify="space-between" m="30">
 
-                  <Button href="javascript:void(0)" id="btn-add-contact" onClick={onOpen} >
+                  <Button href="javascript:void(0)" id="btn-add-contact" onClick={onOpenModal1} >
                     <i className="ti ti-users text-black me-1 fs-5" /> Ajouter Resident
                   </Button>
 
@@ -143,80 +132,12 @@ const Resident = () => {
               </div>
             </div>
           </div>
-          {/* ---------------------
-                    end Contact
-                ---------------- */}
-          {/* //!Modal */}
-          {/* <div className="modal fade" id="addContactModal" tabIndex={-1} role="dialog" aria-labelledby="addContactModalTitle" aria-hidden="true">
-      <div className="modal-dialog modal-dialog-centered" role="document">
-        <div className="modal-content">
-          <div className="modal-header d-flex align-items-center">
-            <h5 className="modal-title">Contact</h5>
-            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-          </div>
-          <div className="modal-body">
-            <div className="add-contact-box">
-              <div className="add-contact-content">
-                <form id="addContactModalTitle">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="mb-3 contact-name">
-                        <input type="text" id="c-name" className="form-control" placeholder="Name" />
-                        <span className="validation-text text-danger" />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="mb-3 contact-email">
-                        <input type="text" id="c-email" className="form-control" placeholder="Email" />
-                        <span className="validation-text text-danger" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="mb-3 contact-occupation">
-                        <input type="text" id="c-occupation" className="form-control" placeholder="Occupation" />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="mb-3 contact-phone">
-                        <input type="text" id="c-phone" className="form-control" placeholder="Phone" />
-                        <span className="validation-text text-danger" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-12">
-                      <div className="mb-3 contact-location">
-                        <input type="text" id="c-location" className="form-control" placeholder="Location" />
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-          <div className="modal-footer">
-            <button id="btn-add" className="btn btn-success rounded-pill px-4">Add</button>
-            <button id="btn-edit" className="btn btn-success rounded-pill px-4">Save</button>
-            <button className="btn btn-danger rounded-pill px-4" data-bs-dismiss="modal"> Discard </button>
-          </div>
-        </div>
-      </div>
-    </div> */}
+
           <div className="card card-body">
             <div className="table-responsive">
               <table className="table search-table align-middle text-nowrap">
                 <thead className="header-item">
-                  <tr><th>
-                    <div className="n-chk align-self-center text-center">
-                      <div className="form-check">
-                        <input type="checkbox" className="form-check-input primary" id="contact-check-all" />
-                        <label className="form-check-label" htmlFor="contact-check-all" />
-                        <span className="new-control-indicator" />
-                      </div>
-                    </div>
-                  </th>
+                  <tr>
                     <th>Full Name</th>
                     <th>Email</th>
                     <th>Address</th>
@@ -225,19 +146,14 @@ const Resident = () => {
                   </tr></thead>
                 <tbody>
                   {/* start row */}
-                  {LstResident.map((res) => (
-                    <tr className="search-items">
-                      <td>
-                        <div className="n-chk align-self-center text-center">
-                          <div className="form-check">
-                            <input type="checkbox" className="form-check-input contact-chkbox primary" id="checkbox1" />
-                            <label className="form-check-label" htmlFor="checkbox1" />
-                          </div>
-                        </div>
-                      </td>
+                  {SearchedList.map((res) => (
+                    <tr key={res.id} className="search-items">
+
                       <td>
                         <div className="d-flex align-items-center">
-                          <img src="images/profile/user-1.jpg" alt="avatar" className="rounded-circle" width={35} />
+                          <Wrap>
+                            <Avatar name={res.firstName + " " + res.lastName} src='https://bit.ly/tioluwani-kolawole' />
+                          </Wrap>
                           <div className="ms-3">
                             <div className="user-meta-info">
                               <h6 className="user-name mb-0" data-name="Emma Adams">{res.firstName} {res.lastName}</h6>
@@ -256,12 +172,15 @@ const Resident = () => {
                       </td>
                       <td>
                         <div className="action-btn">
-                          <a href="javascript:void(0)" className="text-info edit">
-                            <i className="ti ti-eye fs-5" />
-                          </a>
-                          <button onClick={() => handleDelete(res.id)} className="text-dark delete ms-2">
-                            <i className="ti ti-trash fs-5" />
+                          <Button onClick={() => openModalWithObject(res)} className="text-info edit">
+                            <i className="ti ti-edit fs-5" />
+                          </Button>
+                          <button className="text-danger delete ms-2">
+                            <i className="ti ti-trash fs-5" data-bs-toggle="modal"
+                              data-bs-target="#al-warning-alert" onClick={() => setResident(res)} />
                           </button>
+
+
                         </div>
                       </td>
                     </tr>
@@ -270,67 +189,64 @@ const Resident = () => {
 
                 </tbody>
               </table>
+
             </div>
           </div>
         </div>
 
 
       </div>
-
-      <Modal
-        initialFocusRef={initialRef}
-
-        isOpen={isOpen}
-        onClose={onClose}
+      <div
+        className="modal fade"
+        id="al-warning-alert"
+        tabIndex="-1"
+        aria-labelledby="vertical-center-modal"
+        aria-hidden="true"
       >
-        <ModalOverlay />
-        <ModalContent>
-          <form onSubmit={handleSubmit}>
-            <ModalHeader>Add Resident</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody pb={6}>
+        <div className="modal-dialog modal-sm">
+          <div
+            className="modal-content modal-filled bg-light-warning"
+          >
+            <div className="modal-body p-4">
+              <div className="text-center text-warning">
+                <i className="ti ti-hexagon-letter-x fs-7"></i>
+                <h4 className="mt-2">Delete Resident</h4>
+                <p className="mt-3">
+                  Are you certain abour deleting the resident {res.firstName} {res.lastName}
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-light my-2"
+                  data-bs-dismiss="modal"
+                  onClick={() => handleDelete(res.id)}
+                >
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              <FormControl>
-                <FormLabel>First Name</FormLabel>
-                <Input placeholder='First name' onChange={(event) => setResident({ ...res, firstName: event.target.value })} />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Last Name</FormLabel>
-                <Input placeholder='Last name' onChange={(event) => setResident({ ...res, lastName: event.target.value })} />
-              </FormControl>
-              <FormControl>
+      <ModalModifierResident
+        initialRef={initialRef}
+        isOpenModal2={isOpenModal2}
+        onCloseModal2={onCloseModal2}
+        res={res}
+        setResident={setResident}></ModalModifierResident>
 
-                <FormLabel>Email</FormLabel>
-                <Input placeholder='Email' onChange={(event) => setResident({ ...res, email: event.target.value })} />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Address</FormLabel>
-                <Input placeholder='Address' onChange={(event) => setResident({ ...res, address: event.target.value })} />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Phone</FormLabel>
-                <Input placeholder='Address' onChange={(event) => setResident({ ...res, phone: event.target.value })} />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Password</FormLabel>
-                <Input type='password' placeholder='Password' onChange={(event) => setResident({ ...res, password: event.target.value })} />
-              </FormControl>
+      <ModalAjouterResident
+        initialRef={initialRef}
+        isOpenModal1={isOpenModal1}
+        onCloseModal1={onCloseModal1}
+        res={res}
+        setResident={setResident}
+        LstResident={LstResident}
+        setLstResident={setLstResident}>
+
+      </ModalAjouterResident>
 
 
-
-
-            </ModalBody>
-
-
-            <ModalFooter>
-              <Button type="submit" colorScheme='blue' mr={3}>
-                Save
-              </Button>
-              <Button onClick={onClose}>Cancel</Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </Modal>
     </>
 
   );
