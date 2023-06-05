@@ -57,7 +57,7 @@ const SideBar = () => {
                   </span>
                   <span className="hide-menu">Syndics</span>
                 </Link>
-              </li> 
+              </li>
               <li className={`sidebar-item${pathUrl === "/AG" ? " active" : ""}`} onClick={() => setPathUrl("/AG")}>
                 <Link className="sidebar-link" to="/AG" aria-expanded="false">
                   <span>
@@ -67,14 +67,7 @@ const SideBar = () => {
                 </Link>
               </li>
 
-              <li className="sidebar-item">
-                <a className="sidebar-link" href="#" aria-expanded="false">
-                  <span>
-                    <i className="ti ti-calendar" />
-                  </span>
-                  <span className="hide-menu">AG</span>
-                </a>
-              </li>
+
               <li className={`sidebar-item${pathUrl === "/facture" ? " active" : ""}`} onClick={() => setPathUrl("/facture")}>
                 <Link className="sidebar-link" to="/facture" aria-expanded="false">
                   <span>
