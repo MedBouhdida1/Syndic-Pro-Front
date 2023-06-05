@@ -10,6 +10,9 @@ import { useState } from 'react';
 import Syndic from './Components/SyndicComponent/Syndic';
 import Facture from './Components/FactureComponent/Facture';
 import LstFacture from './Components/FactureComponent/LstFacture';
+import AG from './Components/AGComponent/AG';
+
+
 function App() {
   const [loggedin, setLoggedin] = useState(true)
   return (
@@ -30,6 +33,7 @@ function App() {
 
               <Route path='/facture' element={<Facture />} />
               <Route path='/facture/:idres' element={<LstFacture />} />
+              <Route path="/AG" element={<AG />} />
             </Routes>
           </div>
         </div>
