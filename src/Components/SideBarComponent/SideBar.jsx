@@ -65,6 +65,14 @@ const SideBar = () => {
                   <span className="hide-menu">AG</span>
                 </a>
               </li>
+              <li className={`sidebar-item${pathUrl === "/facture" ? " active" : ""}`} onClick={() => setPathUrl("/facture")}>
+                <Link className="sidebar-link" to="/facture" aria-expanded="false">
+                  <span>
+                    <i className="ti ti-notes" />
+                  </span>
+                  <span className="hide-menu">Factures</span>
+                </Link>
+              </li>
 
               {/* <li className="sidebar-item">
             <a className="sidebar-link" href="index5.html" aria-expanded="false">

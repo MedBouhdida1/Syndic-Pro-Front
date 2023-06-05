@@ -7,6 +7,7 @@ class resident {
     this.address = address;
     this.password = password;
     this.phone = phone;
+    this.factures = [];
   }
 
 }

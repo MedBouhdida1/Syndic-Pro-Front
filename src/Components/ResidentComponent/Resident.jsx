@@ -103,99 +103,93 @@ const Resident = () => {
             </div>
           </div>
         </div>
-        <div className="widget-content searchable-container list">
-          {/* --------------------- start Contact ---------------- */}
-          <div className="card card-body">
-            <div className="row">
-              <div className="col-md-4 col-xl-3">
-                <form className="position-relative">
-                  <input type="text" onChange={handleSearch} className="form-control product-search ps-5" id="input-search" placeholder="Search Residents..." />
-                  <i className="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3" />
-
-                </form>
-
-              </div>
-              <div className="col-md-8 col-xl-9 text-end d-flex justify-content-md-end justify-content-center mt-3 mt-md-0">
-                {/* <div className="action-btn show-btn" style={{display: 'none'}}>
+        {/* --------------------- start Contact ---------------- */}
+        <div className="card card-body">
+          <div className="row">
+            <div className="col-md-4 col-xl-3">
+              <form className="position-relative">
+                <input type="text" onChange={handleSearch} className="form-control product-search ps-5" id="input-search" placeholder="Search Syndics..." />
+                <i className="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3" />
+              </form>
+            </div>
+            <div className="col-md-8 col-xl-9 text-end d-flex justify-content-md-end justify-content-center mt-3 mt-md-0">
+              {/* <div className="action-btn show-btn" style={{display: 'none'}}>
             <a href="javascript:void(0)" className="delete-multiple btn-light-danger btn me-2 text-danger d-flex align-items-center font-medium">
               <i className="ti ti-trash text-danger me-1 fs-5" /> Delete All Row 
             </a>
           </div> */}
-                <Flex justify="space-between" m="30">
 
-                  <Button href="javascript:void(0)" id="btn-add-contact" onClick={onOpenModal1} >
-                    <i className="ti ti-users text-black me-1 fs-5" /> Ajouter Resident
-                  </Button>
-
-                </Flex>
-
-              </div>
-            </div>
-          </div>
-
-          <div className="card card-body">
-            <div className="table-responsive">
-              <table className="table search-table align-middle text-nowrap">
-                <thead className="header-item">
-                  <tr>
-                    <th>Full Name</th>
-                    <th>Email</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Action</th>
-                  </tr></thead>
-                <tbody>
-                  {/* start row */}
-                  {SearchedList.map((res) => (
-                    <tr key={res.id} className="search-items">
-
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <Wrap>
-                            <Avatar name={res.firstName + " " + res.lastName} src='https://bit.ly/tioluwani-kolawole' />
-                          </Wrap>
-                          <div className="ms-3">
-                            <div className="user-meta-info">
-                              <h6 className="user-name mb-0" data-name="Emma Adams">{res.firstName} {res.lastName}</h6>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span className="usr-email-addr" data-email="adams@mail.com">{res.email}</span>
-                      </td>
-                      <td>
-                        <span className="usr-location" data-location="Boston, USA">{res.address}</span>
-                      </td>
-                      <td>
-                        <span className="usr-ph-no" data-phone="+1 (070) 123-4567">{res.phone}</span>
-                      </td>
-                      <td>
-                        <div className="action-btn">
-                          <Button onClick={() => openModalWithObject(res)} className="text-info edit">
-                            <i className="ti ti-edit fs-5" />
-                          </Button>
-                          <button className="text-danger delete ms-2">
-                            <i className="ti ti-trash fs-5" data-bs-toggle="modal"
-                              data-bs-target="#al-warning-alert" onClick={() => setResident(res)} />
-                          </button>
-
-
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-
-
-                </tbody>
-              </table>
+              <Button href="javascript:void(0)" id="btn-add-contact" onClick={onOpenModal1} >
+                <i className="ti ti-users text-black me-1 fs-5" /> Ajouter Resident
+              </Button>
 
             </div>
           </div>
         </div>
 
 
+        <div className="card card-body">
+          <div className="table-responsive">
+            <table className="table search-table align-middle text-nowrap">
+              <thead className="header-item">
+                <tr>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Address</th>
+                  <th>Phone</th>
+                  <th>Action</th>
+                </tr></thead>
+              <tbody>
+                {/* start row */}
+                {SearchedList.map((res) => (
+                  <tr key={res.id} className="search-items">
+
+                    <td>
+                      <div className="d-flex align-items-center">
+                        <Wrap>
+                          <Avatar name={res.firstName + " " + res.lastName} src='https://bit.ly/tioluwani-kolawole' />
+                        </Wrap>
+                        <div className="ms-3">
+                          <div className="user-meta-info">
+                            <h6 className="user-name mb-0" data-name="Emma Adams">{res.firstName} {res.lastName}</h6>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="usr-email-addr" data-email="adams@mail.com">{res.email}</span>
+                    </td>
+                    <td>
+                      <span className="usr-location" data-location="Boston, USA">{res.address}</span>
+                    </td>
+                    <td>
+                      <span className="usr-ph-no" data-phone="+1 (070) 123-4567">{res.phone}</span>
+                    </td>
+                    <td>
+                      <div className="action-btn">
+                        <Button onClick={() => openModalWithObject(res)} className="text-info edit">
+                          <i className="ti ti-edit fs-5" />
+                        </Button>
+                        <button className="text-danger delete ms-2">
+                          <i className="ti ti-trash fs-5" data-bs-toggle="modal"
+                            data-bs-target="#al-warning-alert" onClick={() => setResident(res)} />
+                        </button>
+
+
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+
+
+              </tbody>
+            </table>
+
+          </div>
+        </div>
       </div>
+
+
       <div
         className="modal fade"
         id="al-warning-alert"
@@ -233,7 +227,10 @@ const Resident = () => {
         isOpenModal2={isOpenModal2}
         onCloseModal2={onCloseModal2}
         res={res}
-        setResident={setResident}></ModalModifierResident>
+        setResident={setResident}
+        LstResident={LstResident}
+        setLstResident={setLstResident}>
+      </ModalModifierResident>
 
       <ModalAjouterResident
         initialRef={initialRef}

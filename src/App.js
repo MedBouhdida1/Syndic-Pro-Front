@@ -8,9 +8,8 @@ import Resident from './Components/ResidentComponent/Resident';
 import Login from './Components/LoginComponent/Login';
 import { useState } from 'react';
 import Syndic from './Components/SyndicComponent/Syndic';
-
-
-
+import Facture from './Components/FactureComponent/Facture';
+import LstFacture from './Components/FactureComponent/LstFacture';
 function App() {
   const [loggedin, setLoggedin] = useState(true)
   return (
@@ -26,6 +25,11 @@ function App() {
               <Route path="/resident" element={<Resident />} />
               <Route path="/syndic" element={<Syndic />} />
               <Route path="/login" element={<Login />} />
+
+
+
+              <Route path='/facture' element={<Facture />} />
+              <Route path='/facture/:idres' element={<LstFacture />} />
             </Routes>
           </div>
         </div>

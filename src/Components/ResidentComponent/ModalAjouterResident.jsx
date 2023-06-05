@@ -13,13 +13,14 @@ import {
     FormLabel, useDisclosure,
 
 } from '@chakra-ui/react'
+import resident from '../../Types/resident';
 
 
 const ModalAjouterResident = ({ initialRef, isOpenModal1, onCloseModal1, res, setResident, LstResident, setLstResident }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
+            res.id = ""
             const newResident = await HandlePostRequest("http://localhost:8080/resident/register", res);
             setLstResident([...LstResident, newResident.data]);
 

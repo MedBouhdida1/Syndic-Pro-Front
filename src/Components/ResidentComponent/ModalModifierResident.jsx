@@ -14,11 +14,11 @@ import {
     FormLabel, useDisclosure,
 
 } from '@chakra-ui/react'
-const ModalModifierResident = ({ initialRef, isOpenModal2, onCloseModal2, res, setResident }) => {
+const ModalModifierResident = ({ initialRef, isOpenModal2, onCloseModal2, res, setResident, LstResident, setLstResident }) => {
     const toast = useToast()
 
     const handleModif = (id, data) => {
-        setResident(data)
+        console.log(LstResident)
         axios.put("http://localhost:8080/resident/" + id, data)
             .then(() => {
 
@@ -29,10 +29,14 @@ const ModalModifierResident = ({ initialRef, isOpenModal2, onCloseModal2, res, s
                     duration: 3000,
                     isClosable: true,
                 })
-                onCloseModal2()
-                setTimeout(() => {
-                    window.location.reload()
-                }, 3500)
+                onCloseModal2();
+                setResident(data)
+                const newList = LstResident.filter(res => res.id !== id)
+                setLstResident([...newList, res])
+
+                // setTimeout(() => {
+                //     window.location.reload()
+                // }, 3500)
             })
 
 
